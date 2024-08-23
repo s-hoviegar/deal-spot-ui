@@ -1,8 +1,8 @@
 "use server";
 
-import { API_URL } from "@/app/constants/api";
-import { getErrorMessage } from "@/app/util/errors";
+import { post } from "@/app/common/util/fetch";
 import { redirect } from "next/navigation";
+import { getErrorMessage } from "../../common/util/errors";
 
 export default async function createUser(_prevState: any, formData: FormData) {
   const filteredFormData = new FormData();
@@ -17,10 +17,7 @@ export default async function createUser(_prevState: any, formData: FormData) {
     }
   });
 
-  const res = await fetch(`${API_URL}/users`, {
-    method: "POST",
-    body: filteredFormData,
-  });
+  const res = await post("users", filteredFormData);
   const parsedRes = await res.json();
   if (!res.ok) {
     return { error: getErrorMessage(parsedRes) };
