@@ -181,7 +181,7 @@ export default function Header() {
               textDecoration: "none",
             }}
           >
-            DealSpot
+            Deal Spot
           </Typography>
           <Search sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
             <SearchIconWrapper>
