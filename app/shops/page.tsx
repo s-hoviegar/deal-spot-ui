@@ -1,24 +1,11 @@
-"use client";
+import Shops from "./shops";
+import CreateShopFab from "./create-shop/create-shop-fab";
 
-import { Fab } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import CreateShopModal from "./create-shop-modal";
-import { useState } from "react";
-
-export default function CreateShopFab() {
-  const [modalVisible, setModalVisible] = useState(false);
-
+export default function ShopPage() {
   return (
     <>
-      <CreateShopModal
-        open={modalVisible}
-        handleClose={() => setModalVisible(false)}
-      />
-      <div className="absolute left-10 bottom-10">
-        <Fab color="primary" onClick={() => setModalVisible(true)}>
-          <AddIcon />
-        </Fab>
-      </div>
+      <Shops />
+      <CreateShopFab />
     </>
   );
 }
