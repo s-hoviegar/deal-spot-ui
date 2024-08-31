@@ -144,22 +144,24 @@ export default function FileUpload() {
                 return (
                   <Grid key={i} item xs={4}>
                     <div
+                      className="hover:!opacity-50 cursor-not-allowed relative z-0"
                       onClick={() => {
                         const newArray = [
                           ...files.slice(0, i),
                           ...files.slice(i + 1),
                         ];
-
                         setFiles(newArray);
                       }}
                     >
-                      x
+                      <div className="absolute opacity-0 hover:!opacity-100 inset-0 flex justify-center items-center z-10">
+                        <p className="text-2xl font-bold">X</p>
+                      </div>
+                      <object
+                        className="rounded-md w-20"
+                        data={file.blob_url}
+                        type={file.type} //need to be updated based on type of file
+                      />
                     </div>
-                    <object
-                      className="rounded-md w-20"
-                      data={file.blob_url}
-                      type={file.type} //need to be updated based on type of file
-                    />
                   </Grid>
                 );
               })}
