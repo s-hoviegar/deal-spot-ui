@@ -10,7 +10,7 @@ export default async function Shops() {
       <Grid container spacing={3}>
         {shops.map((shop) => (
           <Grid key={shop.retailer_id} sm={6} lg={4} xs={12}>
-            <Shop key={shop.retailer_id} shop={shop} />
+            <Shop shop={shop} />
           </Grid>
         ))}
       </Grid>

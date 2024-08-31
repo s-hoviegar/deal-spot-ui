@@ -4,6 +4,7 @@ import { Box, Button, Modal, Stack, TextField } from "@mui/material";
 import { useState } from "react";
 import { FormResponse } from "../../common/interfaces/form-response.interface";
 import createShop from "../actions/create-shop";
+import FileUpload from "./upload-shop-image";
 
 const styles = {
   position: "absolute",
@@ -94,6 +95,7 @@ export default function CreateShopModal({
               helperText={response?.error}
               error={!!response?.error}
             />
+            <FileUpload />
             <Button type="submit" variant="contained">
               Submit
             </Button>
