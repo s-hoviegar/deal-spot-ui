@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { API_URL } from "../constants/api";
 
-const getHeaders = () => ({
+export const getHeaders = () => ({
   Cookie: cookies().toString(),
 });
 

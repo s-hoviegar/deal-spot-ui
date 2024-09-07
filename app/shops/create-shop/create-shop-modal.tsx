@@ -4,7 +4,7 @@ import { Box, Button, Modal, Stack, TextField } from "@mui/material";
 import { useState } from "react";
 import { FormResponse } from "../../common/interfaces/form-response.interface";
 import createShop from "../actions/create-shop";
-import FileUpload from "./upload-shop-image";
+import FileUpload from "./upload-shop-image-modal";
 
 const styles = {
   position: "absolute",
@@ -20,12 +20,16 @@ const styles = {
 
 interface CreateShopModalProps {
   open: boolean;
+  setModalImageVisible: (arg: boolean) => void;
   handleClose: () => void;
+  setShopId: (arg: number) => void;
 }
 
 export default function CreateShopModal({
   open,
+  setModalImageVisible,
   handleClose,
+  setShopId,
 }: CreateShopModalProps) {
   const [response, setResponse] = useState<FormResponse>();
 
@@ -44,6 +48,8 @@ export default function CreateShopModal({
             setResponse(response);
             if (!response.error) {
               onClose();
+              setShopId(response.retailer_id);
+              setModalImageVisible(true);
             }
           }}
         >
@@ -95,9 +101,8 @@ export default function CreateShopModal({
               helperText={response?.error}
               error={!!response?.error}
             />
-            <FileUpload />
             <Button type="submit" variant="contained">
-              Submit
+              Next
             </Button>
           </Stack>
         </form>

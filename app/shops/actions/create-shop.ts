@@ -11,5 +11,6 @@ export default async function createShop(formData: FormData) {
   if (!res.ok) {
     return { error: getErrorMessage(parsedRes) };
   }
-  return { error: "" };
+  const id = parsedRes.retailer_id;
+  return { retailer_id: id, error: "" };
 }
