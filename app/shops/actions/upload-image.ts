@@ -9,18 +9,26 @@ export default async function uploadShopImage(
   formData: FormData,
   shopId: number
 ) {
-  const file = formData.get("images");
-  console.log(file);
+  // console.log("FORMDATA*:");
+  // console.log(formData);
+  // const files: any = formData.getAll("images");
+  // console.log("FILE*:");
+  // console.log(files);
   const newFormData = new FormData();
-  newFormData.append("images", file);
+  formData.forEach((file) => {
+    newFormData.append("images", file);
+  });
+  console.log(newFormData);
   const res = await fetch(`${API_URL}/retailers/${shopId}/image`, {
-    body: formData,
+    body: newFormData,
     method: "POST",
     headers: getHeaders(),
   });
-  return res;
-  // if (!res.ok) {
-  //   return { error: getErrorMessage(parsedRes) };
-  // }
-  // return { error: "" };
+  // console.log("reeeeeesssssssuuuuuuulllttttt:::::", res);
+  const parsedRes = await res.json();
+  if (!res.ok) {
+    revalidateTag("retailers");
+    return { error: getErrorMessage(parsedRes) };
+  }
+  return { error: "" };
 }

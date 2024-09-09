@@ -1,8 +1,9 @@
 "use client";
 import { FormResponse } from "@/app/common/interfaces/form-response.interface";
 import { Alert, Box, Button, Grid, Modal, Stack } from "@mui/material";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import uploadShopImage from "../actions/upload-image";
+import { useFormState } from "react-dom";
 
 const styles = {
   position: "absolute",
@@ -21,6 +22,10 @@ type fileObject = {
   type: string;
 };
 
+type responseObject = {
+  error: string;
+};
+
 interface UploadShopImageModalProps {
   open: boolean;
   handleClose: () => void;
@@ -33,25 +38,46 @@ export default function FileUploadModal({
   shopId,
 }: UploadShopImageModalProps) {
   const [files, setFiles] = useState<fileObject[]>([]);
+  const [formFiles, setFormFiles] = useState<File[]>([]);
   const [fileEnter, setFileEnter] = useState(false);
   const [fileError, setFileError] = useState(false);
+  const [isFilePresent, setIsFilePresent] = useState(false);
+  const [response, setResponse] = useState<responseObject>();
 
-  const [response, setResponse] = useState<FormResponse>();
+  // const [formState, formAction] = useFormState(action, initialState);
+
+  useEffect(() => {
+    if (Object.keys(files).length === 0) {
+      setIsFilePresent(false);
+    } else {
+      setIsFilePresent(true);
+    }
+  }, [files]);
 
   const hiddenFileInput = useRef<HTMLInputElement>(null);
 
   // Component logic goes here
   const onClose = () => {
     setResponse(undefined);
+    setFiles([]);
+    setFormFiles([]);
+    setFileEnter(false);
+    setFileError(false);
+    setIsFilePresent(false);
     handleClose();
   };
 
   const inputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.files);
     setFileError(false);
-    let files = e.target.files;
-    if (files && files[0]) {
-      Array.prototype.forEach.call(files, function (file) {
+
+    const selectedFiles = e.target.files;
+    if (selectedFiles && selectedFiles.length > 0) {
+      const newFiles = Array.from(selectedFiles);
+      setFormFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    }
+
+    if (selectedFiles && selectedFiles[0]) {
+      Array.prototype.forEach.call(selectedFiles, function (file) {
         let blobUrl = URL.createObjectURL(file);
         setFiles((prevState) => [
           ...prevState,
@@ -83,10 +109,14 @@ export default function FileUploadModal({
     e.preventDefault();
     setFileEnter(false);
     setFileError(false);
-    console.log("event dataTransfer");
-    console.log(e.dataTransfer.items);
-    if (e.dataTransfer.items) {
-      Array.prototype.forEach.call(e.dataTransfer.items, function (item, i) {
+    const droppedFiles = e.dataTransfer.files;
+    if (droppedFiles.length > 0) {
+      const newFiles = Array.from(droppedFiles);
+      setFormFiles((prevFiles) => [...prevFiles, ...newFiles]);
+    }
+    const droppedItems = e.dataTransfer.items;
+    if (droppedItems) {
+      Array.prototype.forEach.call(droppedItems, function (item, i) {
         const file = item.getAsFile();
         if (file.type.toLowerCase().startsWith("image/")) {
           if (file) {
@@ -102,28 +132,32 @@ export default function FileUploadModal({
         }
       });
     } else {
-      Array.prototype.forEach.call(e.dataTransfer.files, function (file, i) {
+      Array.prototype.forEach.call(droppedFiles, function (file, i) {
         console.log(`... file[${i}].name = ${file?.name}`);
       });
     }
   };
 
+  // This is the funtion handling the form action
+  async function action() {
+    const formData = new FormData();
+    Object.entries(formFiles).forEach(([key, value]) => {
+      if (value) {
+        formData.append(key, value);
+      }
+    });
+
+    const response = await uploadShopImage(formData, shopId);
+    setResponse(response);
+    if (!response.error) {
+      onClose();
+    }
+  }
+
   return (
     <Modal open={open} onClose={onClose}>
       <Box sx={styles}>
-        <form
-          className="w-full max-w-xs"
-          action={async (formData) => {
-            // console.log(Object.fromEntries(formData));
-            // console.log(formData.getAll("files"));
-            const response = await uploadShopImage(formData, shopId);
-            console.log(response);
-            setResponse(response);
-            if (!response.error) {
-              onClose();
-            }
-          }}
-        >
+        <form className="w-full max-w-xs" action={action}>
           <Stack spacing={2}>
             <div className="container px-4 max-w-5xl mx-auto">
               {fileError ? (
@@ -134,7 +168,9 @@ export default function FileUploadModal({
               ) : (
                 ""
               )}
-              {Object.keys(files).length === 0 ? (
+              <div
+                className={`${!isFilePresent ? "overflow-y-auto h-72" : ""}`}
+              >
                 <div
                   onDragOver={divOnDragOverHandler}
                   onDragLeave={divOnDragLeaveHandler}
@@ -142,45 +178,31 @@ export default function FileUploadModal({
                   onDrop={divOnDropHandler}
                   className={`${
                     fileEnter ? "border-4" : "border-2"
-                  } mx-auto bg-black flex flex-col w-full max-w-xs h-72 border-dashed items-center justify-center`}
+                  } mx-auto bg-black flex flex-col w-full max-w-xs border-dashed p-3 ${
+                    !isFilePresent ? " h-72 items-center justify-center" : ""
+                  }`}
                 >
-                  <label
-                    htmlFor="files_empty"
-                    className="h-full flex flex-col justify-center text-center"
-                  >
-                    Click to upload or drag and drop
-                  </label>
+                  {!isFilePresent ? (
+                    <label
+                      htmlFor="files"
+                      className="h-full flex flex-col justify-center text-center"
+                    >
+                      Click to upload or drag and drop
+                    </label>
+                  ) : (
+                    ""
+                  )}
                   <input
-                    id="files_empty"
+                    id="files"
                     name="images"
                     type="file"
                     accept="image/*"
-                    multiple
+                    ref={hiddenFileInput}
+                    multiple={true}
                     className="hidden"
                     onChange={inputChangeHandler}
                   />
-                </div>
-              ) : (
-                <div className="overflow-y-auto h-72">
-                  <div
-                    onDragOver={divOnDragOverHandler}
-                    onDragLeave={divOnDragLeaveHandler}
-                    onDragEnd={divOnDragEndHandler}
-                    onDrop={divOnDropHandler}
-                    className={`${
-                      fileEnter ? "border-4" : "border-2"
-                    } mx-auto bg-black flex flex-col w-full max-w-xs border-dashed p-3`}
-                  >
-                    <input
-                      id="files"
-                      name="images"
-                      type="file"
-                      accept="image/*"
-                      ref={hiddenFileInput}
-                      multiple={true}
-                      className="hidden"
-                      onChange={inputChangeHandler}
-                    />
+                  {isFilePresent ? (
                     <Grid container spacing={1.5}>
                       <Grid item xs={4}>
                         <Button
@@ -193,43 +215,52 @@ export default function FileUploadModal({
                         </Button>
                       </Grid>
                     </Grid>
-                    <div className="opacity-0">/</div>
-                    <Grid container spacing={1.5}>
-                      {files.map((file, i) => (
-                        <Grid key={i} item xs={4}>
-                          <div
-                            className="hover:!opacity-50 cursor-not-allowed relative z-0"
-                            onClick={() => {
-                              const newArray = [
-                                ...files.slice(0, i),
-                                ...files.slice(i + 1),
-                              ];
-                              setFiles(newArray);
-                            }}
-                          >
-                            <div className="absolute opacity-0 hover:!opacity-100 inset-0 flex justify-center items-center z-10">
-                              <p className="text-2xl font-bold drop-shadow-[0_4px_0.2px_rgba(0,0,0,0.8)]">
-                                X
-                              </p>
-                            </div>
-                            <object
-                              className="rounded-md w-20"
-                              data={file.blob_url}
-                              type={file.type} //need to be updated based on type of file
-                            />
+                  ) : (
+                    ""
+                  )}
+                  <div className="opacity-0">/</div>
+                  <Grid container spacing={1.5}>
+                    {files.map((file, i) => (
+                      <Grid key={i} item xs={4}>
+                        <div
+                          className="hover:!opacity-50 cursor-not-allowed relative z-0"
+                          onClick={() => {
+                            const newArray = [
+                              ...files.slice(0, i),
+                              ...files.slice(i + 1),
+                            ];
+                            setFiles(newArray);
+                          }}
+                        >
+                          <div className="absolute opacity-0 hover:!opacity-100 inset-0 flex justify-center items-center z-10">
+                            <p className="text-2xl font-bold drop-shadow-[0_4px_0.2px_rgba(0,0,0,0.8)]">
+                              X
+                            </p>
                           </div>
-                        </Grid>
-                      ))}
-                    </Grid>
+                          <object
+                            className="rounded-md w-20"
+                            data={file.blob_url}
+                            type={file.type} //need to be updated based on type of file
+                          />
+                        </div>
+                      </Grid>
+                    ))}
+                  </Grid>
+                  {isFilePresent ? (
                     <button
-                      onClick={() => setFiles([])}
+                      onClick={() => {
+                        setFiles([]);
+                        setFormFiles([]);
+                      }}
                       className="px-4 mt-10 uppercase py-2 tracking-widest outline-none bg-red-600 text-white rounded"
                     >
                       Reset
                     </button>
-                  </div>
+                  ) : (
+                    ""
+                  )}
                 </div>
-              )}
+              </div>
             </div>
             <Button type="submit" variant="contained">
               Upload
