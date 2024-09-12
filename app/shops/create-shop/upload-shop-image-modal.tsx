@@ -230,6 +230,12 @@ export default function FileUploadModal({
                               ...files.slice(i + 1),
                             ];
                             setFiles(newArray);
+
+                            const newFormArray = [
+                              ...formFiles.slice(0, i),
+                              ...formFiles.slice(i + 1),
+                            ];
+                            setFormFiles(newFormArray);
                           }}
                         >
                           <div className="absolute opacity-0 hover:!opacity-100 inset-0 flex justify-center items-center z-10">
