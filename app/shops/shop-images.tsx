@@ -11,7 +11,7 @@ import { useEffect, useState } from "react";
 
 interface ShopImagesProps {
   images: SIs | NoShopImage;
-  url: string;
+  url: string | undefined;
 }
 
 export default function ShopImages({ images, url }: ShopImagesProps) {

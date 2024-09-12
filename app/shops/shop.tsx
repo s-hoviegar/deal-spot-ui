@@ -1,4 +1,4 @@
-import { Card, Typography } from "@mui/material";
+import { Card, Stack, Typography } from "@mui/material";
 import { Shop as IShop } from "./interfaces/shop.interface";
 import ShopImages from "./shop-images";
 import getShopImages from "./actions/get-shop-images";
@@ -13,10 +13,12 @@ export default async function Shop({ shop }: ShopProps) {
 
   return (
     <Card className="p-4">
-      <ShopImages images={shopImages} url={API_URL} />
-      <Typography variant="h4">{shop.name}</Typography>
-      <Typography>{shop.website}</Typography>
-      <Typography>${shop.location}</Typography>
+      <Stack gap={3}>
+        <Typography variant="h4">{shop.name}</Typography>
+        <ShopImages images={shopImages} url={API_URL} />
+        <Typography>{shop.website}</Typography>
+        <Typography>${shop.location}</Typography>
+      </Stack>
     </Card>
   );
 }
