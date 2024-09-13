@@ -6,7 +6,7 @@ export function middleware(request: NextRequest) {
   const auth = authenticated();
   if (
     !auth &&
-    !unauthenticatedRoutes.some((route) =>
+    unauthenticatedRoutes.some((route) =>
       request.nextUrl.pathname.startsWith(route.path)
     )
   ) {

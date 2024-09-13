@@ -1,15 +1,11 @@
 export const unauthenticatedRoutes = [
   {
-    title: "Login",
-    path: "/auth/login",
+    title: "Shops",
+    path: "/shops",
   },
   {
-    title: "Signup",
-    path: "/auth/signup",
-  },
-  {
-    title: "Home",
-    path: "/",
+    title: "Profile",
+    path: "/users/me",
   },
 ];
 

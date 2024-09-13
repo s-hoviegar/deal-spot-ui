@@ -6,4 +6,13 @@ export interface Shop {
   location: string;
   address: string;
   average_rating: number;
+  imageExists: boolean;
+  images: ShopImage[];
+}
+
+export interface ShopImage {
+  retailer_image_id: number;
+  name: string;
+  retailer_id: number;
+  file: string;
 }
