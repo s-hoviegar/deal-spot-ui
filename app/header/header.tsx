@@ -100,6 +100,9 @@ export default function Header({ logout }: HeaderProps) {
       <MenuItem onClick={handleMenuClose} component={NextLink} href="/shops">
         My shops
       </MenuItem>
+      <MenuItem onClick={handleMenuClose} component={NextLink} href="/products">
+        My products
+      </MenuItem>
       <MenuItem
         onClick={async () => {
           await logout();
@@ -113,7 +116,7 @@ export default function Header({ logout }: HeaderProps) {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="fixed">
         <Toolbar>
           <IconButton
             size="large"

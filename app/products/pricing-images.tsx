@@ -3,15 +3,15 @@
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Image from "next/image";
-import { ShopImage as IShopImage } from "./interfaces/shop.interface";
+import { PricingImage as IPricingImage } from "./interfaces/pricing.interface";
 import { useEffect, useState } from "react";
 
-interface ShopImagesProps {
-  images: IShopImage[];
+interface PricingImagesProps {
+  images: IPricingImage[];
   url: string | undefined;
 }
 
-export default function ShopImages({ images, url }: ShopImagesProps) {
+export default function PricingImages({ images, url }: PricingImagesProps) {
   const [src, setSrc] = useState("");
   const [i, setI] = useState(0);
 

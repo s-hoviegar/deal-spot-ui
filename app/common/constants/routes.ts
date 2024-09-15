@@ -1,11 +1,15 @@
 export const unauthenticatedRoutes = [
   {
+    title: "Profile",
+    path: "/users/me",
+  },
+  {
     title: "Shops",
     path: "/shops",
   },
   {
-    title: "Profile",
-    path: "/users/me",
+    title: "Products",
+    path: "/products",
   },
 ];
 

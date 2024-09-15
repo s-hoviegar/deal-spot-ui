@@ -2,32 +2,32 @@
 
 import { Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import CreateShopModal from "./create-shop-modal";
+import CreatePricingModal from "./create-pricing-modal";
 import { useState } from "react";
-import FileUploadModal from "./upload-shop-image-modal";
+import FileUploadModal from "./upload-pricing-image-modal";
 
-export default function CreateShopFab() {
-  const [modalShopVisible, setModalShopVisible] = useState(false);
+export default function CreatePricingFab() {
+  const [modalPricingVisible, setModalPricingVisible] = useState(false);
   const [modalImageVisible, setModalImageVisible] = useState(false);
-  const [shopId, setShopId] = useState<number>(0);
+  const [pricingId, setPricingId] = useState<number>(0);
 
   return (
     <>
-      <CreateShopModal
-        open={modalShopVisible}
+      <CreatePricingModal
+        open={modalPricingVisible}
         setModalImageVisible={setModalImageVisible}
         handleClose={() => {
-          setModalShopVisible(false);
+          setModalPricingVisible(false);
         }}
-        setShopId={setShopId}
+        setPricingId={setPricingId}
       />
       <FileUploadModal
         open={modalImageVisible}
         handleClose={() => setModalImageVisible(false)}
-        shopId={shopId}
+        pricingId={pricingId}
       />
       <div className="fixed left-10 bottom-10">
-        <Fab color="primary" onClick={() => setModalShopVisible(true)}>
+        <Fab color="primary" onClick={() => setModalPricingVisible(true)}>
           <AddIcon />
         </Fab>
       </div>

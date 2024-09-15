@@ -16,3 +16,8 @@ export interface ShopImage {
   retailer_id: number;
   file: string;
 }
+
+export interface ShopError {
+  statusCode: number;
+  message: string;
+}
