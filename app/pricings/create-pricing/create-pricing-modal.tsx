@@ -5,6 +5,7 @@ import {
   Button,
   FormControl,
   FormControlLabel,
+  FormHelperText,
   FormLabel,
   MenuItem,
   Modal,
@@ -17,6 +18,10 @@ import { useState } from "react";
 import { FormResponse } from "../../common/interfaces/form-response.interface";
 import createPricing from "../actions/create-pricing";
 import CreateProductOptionDialog from "./create-product-option-dialog";
+import RetailerCombobox from "./retailer-combobox";
+import { Product } from "../interfaces/product.interface";
+import { Shop } from "../../shops/interfaces/shop.interface";
+import { Category } from "../interfaces/category.interface";
 
 const styles = {
   position: "absolute",
@@ -35,6 +40,9 @@ interface CreatePricingModalProps {
   setModalImageVisible: (arg: boolean) => void;
   handleClose: () => void;
   setPricingId: (arg: number) => void;
+  products: Product[];
+  shops: Shop[];
+  categories: Category[];
 }
 
 export default function CreatePricingModal({
@@ -42,6 +50,9 @@ export default function CreatePricingModal({
   setModalImageVisible,
   handleClose,
   setPricingId,
+  products,
+  shops,
+  categories,
 }: CreatePricingModalProps) {
   const [response, setResponse] = useState<FormResponse>();
 
@@ -56,6 +67,7 @@ export default function CreatePricingModal({
         <form
           className="w-full max-w-xs"
           action={async (formData) => {
+            console.log(formData);
             const response = await createPricing(formData);
             setResponse(response);
             if (!response.error) {
@@ -66,8 +78,17 @@ export default function CreatePricingModal({
           }}
         >
           <Stack spacing={2}>
-            <CreateProductOptionDialog />
-            {/* <CreateProductOptionDialog /> */}
+            <CreateProductOptionDialog
+              helperText={response?.error}
+              error={!!response?.error}
+              products={products}
+              categories={categories}
+            />
+            <RetailerCombobox
+              helperText={response?.error}
+              error={!!response?.error}
+              shops={shops}
+            />
             <TextField
               name="price"
               label="Price"
@@ -81,6 +102,7 @@ export default function CreatePricingModal({
               name="currency"
               label="Currency"
               variant="outlined"
+              required
               helperText={response?.error}
               error={!!response?.error}
             />
@@ -88,36 +110,48 @@ export default function CreatePricingModal({
               name="sale"
               label="Is it a sale pricing?"
               variant="outlined"
+              required
               helperText={response?.error}
               error={!!response?.error}
               select
               defaultValue="No"
             >
               {["Yes", "No"].map((option) => (
-                <MenuItem key={option} value={option}>
+                <MenuItem
+                  key={option}
+                  value={option === "Yes" ? "true" : "false"}
+                >
                   {option}
                 </MenuItem>
               ))}
             </TextField>
-            <FormControl>
-              <FormLabel id="demo-controlled-radio-buttons-group">
+            <FormControl error={!!response?.error} required>
+              <FormLabel
+                id="demo-controlled-radio-buttons-group"
+                error={!!response?.error}
+              >
                 Availability
               </FormLabel>
-              <RadioGroup aria-labelledby="availability" name="availability">
+              <RadioGroup
+                aria-labelledby="availability"
+                name="availability"
+                defaultValue="ONLINE"
+              >
                 <FormControlLabel
-                  value="female"
+                  value="ONLINE"
                   control={<Radio />}
                   label="Online"
                 />
                 <FormControlLabel
-                  value="male"
+                  value="IN_STORE"
                   control={<Radio />}
                   label="In store"
                 />
               </RadioGroup>
+              <FormHelperText>{response?.error}</FormHelperText>
             </FormControl>
             <Button type="submit" variant="contained">
-              Next
+              Add pricing
             </Button>
           </Stack>
         </form>

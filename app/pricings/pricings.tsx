@@ -1,8 +1,8 @@
+import { Card, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
 import getPricings from "./actions/get-pricings";
-import Pricing from "./pricing";
 import { API_URL } from "../common/constants/api";
-import { Card, Typography } from "@mui/material";
+import Pricing from "./pricing";
 
 export default async function Pricings() {
   const pricings = await getPricings();

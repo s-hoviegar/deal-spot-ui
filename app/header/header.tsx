@@ -100,7 +100,7 @@ export default function Header({ logout }: HeaderProps) {
       <MenuItem onClick={handleMenuClose} component={NextLink} href="/shops">
         My shops
       </MenuItem>
-      <MenuItem onClick={handleMenuClose} component={NextLink} href="/products">
+      <MenuItem onClick={handleMenuClose} component={NextLink} href="/pricings">
         My products
       </MenuItem>
       <MenuItem

@@ -5,8 +5,21 @@ import AddIcon from "@mui/icons-material/Add";
 import CreatePricingModal from "./create-pricing-modal";
 import { useState } from "react";
 import FileUploadModal from "./upload-pricing-image-modal";
+import { Product } from "../interfaces/product.interface";
+import { Shop } from "../../shops/interfaces/shop.interface";
+import { Category } from "../interfaces/category.interface";
 
-export default function CreatePricingFab() {
+interface CreatePricingFabProps {
+  products: Product[];
+  shops: Shop[];
+  categories: Category[];
+}
+
+export default function CreatePricingFab({
+  products,
+  shops,
+  categories,
+}: CreatePricingFabProps) {
   const [modalPricingVisible, setModalPricingVisible] = useState(false);
   const [modalImageVisible, setModalImageVisible] = useState(false);
   const [pricingId, setPricingId] = useState<number>(0);
@@ -20,6 +33,9 @@ export default function CreatePricingFab() {
           setModalPricingVisible(false);
         }}
         setPricingId={setPricingId}
+        products={products}
+        shops={shops}
+        categories={categories}
       />
       <FileUploadModal
         open={modalImageVisible}
