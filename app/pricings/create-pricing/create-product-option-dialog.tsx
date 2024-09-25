@@ -13,6 +13,7 @@ import CategoryCombobox from "./category-combobox";
 import { Stack } from "@mui/material";
 import createProduct from "../actions/create-product";
 import { FormResponse } from "@/app/common/interfaces/form-response.interface";
+import UploadProductImageForm from "./upload-product-image";
 
 const filter = createFilterOptions<ProductOptionType>();
 
@@ -31,8 +32,15 @@ export default function CreateProductOptionDialog({
 }: CreateProductOptionDialogProps) {
   const [productId, setProductId] = useState<number | undefined>();
   const [value, setValue] = useState<ProductOptionType | null>(null);
-  const [open, toggleOpen] = useState(false);
+  const [openProduct, toggleOpenProduct] = useState(false);
+  const [openImage, toggleOpenImage] = useState(false);
   const [response, setResponse] = useState<FormResponse>();
+  const [dialogValue, setDialogValue] = useState({
+    id: 0,
+    name: "",
+    detail: {},
+    category_id: 0,
+  });
 
   const handleClose = () => {
     setDialogValue({
@@ -42,15 +50,21 @@ export default function CreateProductOptionDialog({
       category_id: 0,
     });
     setResponse(undefined);
-    toggleOpen(false);
+    toggleOpenProduct(false);
+    toggleOpenImage(false);
   };
 
-  const [dialogValue, setDialogValue] = useState({
-    id: 0,
-    name: "",
-    detail: {},
-    category_id: 0,
-  });
+  const handleNext = () => {
+    setDialogValue({
+      id: 0,
+      name: "",
+      detail: {},
+      category_id: 0,
+    });
+    setResponse(undefined);
+    toggleOpenProduct(false);
+    toggleOpenImage(true);
+  };
 
   const handleSubmit = async (formData: FormData) => {
     const response = await createProduct(formData);
@@ -60,8 +74,8 @@ export default function CreateProductOptionDialog({
         name: dialogValue.name,
         id: dialogValue.id,
       });
-      handleClose();
       setProductId(response.product_id);
+      handleNext();
     }
   };
 
@@ -79,11 +93,11 @@ export default function CreateProductOptionDialog({
       <Autocomplete
         disablePortal
         value={value}
-        onChange={(event, newValue: ProductOptionType) => {
+        onChange={(event, newValue) => {
           if (typeof newValue === "string") {
             // timeout to avoid instant validation of the dialog's form.
             setTimeout(() => {
-              toggleOpen(true);
+              toggleOpenProduct(true);
               setDialogValue({
                 id: 0,
                 name: newValue,
@@ -93,7 +107,7 @@ export default function CreateProductOptionDialog({
             });
             console.log("teeesssssssttttttttiiii", newValue);
           } else if (newValue && newValue.inputValue) {
-            toggleOpen(true);
+            toggleOpenProduct(true);
             setDialogValue({
               id: 0,
               name: newValue.inputValue,
@@ -106,8 +120,8 @@ export default function CreateProductOptionDialog({
             setProductId(newValue?.id);
           }
         }}
-        filterOptions={(options, params) => {
-          const filtered = filter(options, params);
+        filterOptions={(options: (string | ProductOptionType)[], params) => {
+          const filtered = filter(options as ProductOptionType[], params);
 
           if (params.inputValue !== "") {
             filtered.push({
@@ -162,7 +176,8 @@ export default function CreateProductOptionDialog({
           </>
         )}
       />
-      <Dialog open={open} onClose={handleClose}>
+      {/* Product dialog */}
+      <Dialog open={openProduct} onClose={handleClose}>
         <form action={handleSubmit} className="w-full max-w-xs">
           <Stack spacing={2}>
             <DialogTitle>Add a new product</DialogTitle>
@@ -184,6 +199,7 @@ export default function CreateProductOptionDialog({
                   })
                 }
                 label="Name"
+                required
                 type="text"
                 variant="standard"
                 helperText={response?.error}
@@ -215,10 +231,28 @@ export default function CreateProductOptionDialog({
             </DialogContent>
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
-              <Button type="submit">Add</Button>
+              <Button type="submit">Next</Button>
             </DialogActions>
           </Stack>
         </form>
+      </Dialog>
+      {/* Image dialog */}
+      <Dialog open={openImage} onClose={handleClose}>
+        <Stack spacing={2}>
+          <DialogTitle>Upload product images</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Upload images showing the product.
+            </DialogContentText>
+            <UploadProductImageForm
+              handleClose={handleClose}
+              productId={productId}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+          </DialogActions>
+        </Stack>
       </Dialog>
     </>
   );

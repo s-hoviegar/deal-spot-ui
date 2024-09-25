@@ -4,14 +4,15 @@ import Image from "next/image";
 import getPricing from "../actions/get-pricing";
 import getPricingImages from "../actions/get-pricing-images";
 import { API_URL } from "@/app/common/constants/api";
-import { Pricing, PricingError } from "../interfaces/pricing.interface";
+import { Price, PricingError } from "../interfaces/pricing.interface";
+import getProduct from "../actions/get-product";
 
 interface SinglePricingProps {
   params: { pricingId: string };
 }
 
 export default async function SinglePricing({ params }: SinglePricingProps) {
-  let pricing: Pricing | PricingError;
+  let pricing: Price | PricingError;
   try {
     pricing = (await getPricing(+params.pricingId)) as PricingError;
     if (pricing.statusCode === 403) {
@@ -26,15 +27,14 @@ export default async function SinglePricing({ params }: SinglePricingProps) {
         </>
       );
     } else {
-      pricing = pricing as unknown as Pricing;
+      pricing = pricing as unknown as Price;
+      const product = await getProduct(pricing.product_id);
       return (
         <Grid container marginBottom={"2rem"} rowGap={3}>
-          {pricing?.imageExists && (
+          {product.imageExists && (
             <Grid md={6} xs={12}>
               <Image
-                src={`${API_URL}/${(
-                  await getPricingImages(pricing.retailer_id)
-                )[0].file.slice(7)}`}
+                src={`${API_URL}/${product.images[0].file.slice(7)}`}
                 width={0}
                 height={0}
                 className="w-full sm:w-3/4 h-auto"
@@ -45,9 +45,16 @@ export default async function SinglePricing({ params }: SinglePricingProps) {
           )}
           <Grid md={6} xs={12}>
             <Stack gap={3}>
-              <Typography variant="h2">{pricing.name}</Typography>
-              <Typography>{pricing.contact_info}</Typography>
-              <Typography variant="h4">Networth: €{pricing.website}</Typography>
+              <Typography variant="h2">{product.name}</Typography>
+              <Typography variant="h2">
+                {JSON.stringify(product.detail)}
+              </Typography>
+              <Typography>{pricing.availability}</Typography>
+              <Typography>{pricing.sale ? "On sale" : ""}</Typography>
+              <Typography variant="h4">
+                {pricing.price} {pricing.currency}
+              </Typography>
+              <Typography variant="h4"></Typography>
             </Stack>
           </Grid>
         </Grid>

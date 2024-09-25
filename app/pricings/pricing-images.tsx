@@ -3,7 +3,7 @@
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Image from "next/image";
-import { PricingImage as IPricingImage } from "./interfaces/pricing.interface";
+import { ProductImage as IPricingImage } from "./interfaces/product.interface";
 import { useEffect, useState } from "react";
 
 interface PricingImagesProps {
@@ -48,7 +48,7 @@ export default function PricingImages({ images, url }: PricingImagesProps) {
           height="0"
           className="w-full h-auto rounded"
           sizes="100vw"
-          alt="Picture of retailer"
+          alt="Picture of product"
         />
         {/* {images.length !== 1 ? (
           <>

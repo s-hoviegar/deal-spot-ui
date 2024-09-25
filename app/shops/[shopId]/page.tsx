@@ -32,9 +32,7 @@ export default async function SingleShop({ params }: SingleShopProps) {
           {shop?.imageExists && (
             <Grid md={6} xs={12}>
               <Image
-                src={`${API_URL}/${(
-                  await getShopImages(shop.retailer_id)
-                )[0].file.slice(7)}`}
+                src={`${API_URL}/${shop.images[0].file.slice(7)}`}
                 width={0}
                 height={0}
                 className="w-full sm:w-3/4 h-auto"

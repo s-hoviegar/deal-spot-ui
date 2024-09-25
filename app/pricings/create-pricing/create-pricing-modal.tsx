@@ -72,8 +72,7 @@ export default function CreatePricingModal({
             setResponse(response);
             if (!response.error) {
               onClose();
-              setPricingId(response.retailer_id);
-              setModalImageVisible(true);
+              setPricingId(response.price_id);
             }
           }}
         >
@@ -114,7 +113,7 @@ export default function CreatePricingModal({
               helperText={response?.error}
               error={!!response?.error}
               select
-              defaultValue="No"
+              defaultValue="false"
             >
               {["Yes", "No"].map((option) => (
                 <MenuItem

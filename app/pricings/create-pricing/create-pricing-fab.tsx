@@ -4,7 +4,7 @@ import { Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import CreatePricingModal from "./create-pricing-modal";
 import { useState } from "react";
-import FileUploadModal from "./upload-pricing-image-modal";
+import FileUploadModalProduct from "./upload-product-image";
 import { Product } from "../interfaces/product.interface";
 import { Shop } from "../../shops/interfaces/shop.interface";
 import { Category } from "../interfaces/category.interface";
@@ -36,11 +36,6 @@ export default function CreatePricingFab({
         products={products}
         shops={shops}
         categories={categories}
-      />
-      <FileUploadModal
-        open={modalImageVisible}
-        handleClose={() => setModalImageVisible(false)}
-        pricingId={pricingId}
       />
       <div className="fixed left-10 bottom-10">
         <Fab color="primary" onClick={() => setModalPricingVisible(true)}>

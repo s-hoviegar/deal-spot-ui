@@ -12,6 +12,16 @@ export interface Pricing {
   availability: string;
 }
 
+export interface Price {
+  price_id: number;
+  product_id: number;
+  retailer_id: number;
+  price: number;
+  currency: string;
+  sale: boolean;
+  availability: string;
+}
+
 export interface PricingImage {
   retailer_image_id: number;
   name: string;
